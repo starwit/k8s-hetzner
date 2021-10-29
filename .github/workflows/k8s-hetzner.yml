@@ -88,6 +88,7 @@ jobs:
       - name: Push changes
         uses: ad-m/github-push-action@master
         with:
+          repository: starwit/tfstate
           github_token: ${{ secrets.TFSTATE_PERSONAL_TOKEN }}
           branch: main
 
