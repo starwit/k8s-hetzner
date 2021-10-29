@@ -10,14 +10,15 @@ on:
   push:
     branches:
     - main
-  pull_request:
-  
   workflow_dispatch:
     inputs:
       workspace:
         description: 'terraform environment and workspace: *dev*, *int* or *prod*'     
         required: true
         default: 'dev'
+
+env:
+  workspace: ${{ github.event.inputs.workspace }}
 
 jobs:
   terraform:
@@ -50,7 +51,7 @@ jobs:
       run: terraform init
 
     - name: switch workspace
-      run: terraform workspace new ${{ github.event.inputs.workspace }} -lock=false
+      run: terraform workspace new ${{ env.workspace }}) -lock=false
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
