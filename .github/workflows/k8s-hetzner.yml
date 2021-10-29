@@ -11,13 +11,13 @@ on:
     branches: [ main ]
   workflow_dispatch:
     inputs:
-      workspace:
+      tf-workspace:
         description: 'terraform environment and workspace: *dev*, *int* or *prod*'     
         required: true
         default: "dev"
 
 env:
-  workspace: ${{ github.event.inputs.workspace }}
+  tf-workspace: ${{ github.event.inputs.tf-workspace }}
 
 jobs:
   terraform:
@@ -50,7 +50,7 @@ jobs:
       run: terraform init
 
     - name: switch workspace
-      run: terraform workspace new ${{ env.workspace }} -lock=false
+      run: terraform workspace new ${{ env.tf-workspace }} -lock=false
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
