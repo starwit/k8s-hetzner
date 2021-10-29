@@ -50,7 +50,7 @@ jobs:
       run: terraform init
 
     - name: switch workspace
-      run: terraform workspace new ${{ env.tf-workspace }} -lock=false
+      run: terraform workspace new ${{ env.tf-workspace }}
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
