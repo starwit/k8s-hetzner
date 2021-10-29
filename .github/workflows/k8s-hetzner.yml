@@ -31,16 +31,15 @@ jobs:
     steps:
       - name: Check environment variables
         uses: actions/github-script@v5
+        id: checktf
         with:
           script: |
-            id: checktf
-            run: |
-              if [ "${{ github.event.inputs.tfworkspace }}" == "" ] 
-              then
-                echo '::set-output name=tfworkspace::dev'
-              else
-                echo '::set-output name=tfworkspace::${{ github.event.inputs.tfworkspace }}'
-              fi
+            if [ "${{ github.event.inputs.tfworkspace }}" == "" ] 
+            then
+              echo '::set-output name=tfworkspace::dev'
+            else
+              echo '::set-output name=tfworkspace::${{ github.event.inputs.tfworkspace }}'
+            fi
 
       # Checkout the repository to the GitHub Actions runner
       - name: Checkout
