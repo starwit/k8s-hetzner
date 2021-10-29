@@ -34,6 +34,8 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v2
+
+    - name: Go to terraform directory
       run: |
         cd kubernetes-hetzner
         ls
