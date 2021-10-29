@@ -80,10 +80,11 @@ jobs:
 
       - name: commit terraform state
         run: |
-          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add .
-          git commit -m "save terraform state"
+          git config --global user.name 'automatic checkin'
+          git config --global user.email 'witchpou@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.TFSTATE_PERSONAL_TOKEN }}@github.com/statwit/tfstate
+          git commit -am "Automated report"
+          git push
       
       - name: Push changes
         uses: ad-m/github-push-action@master
