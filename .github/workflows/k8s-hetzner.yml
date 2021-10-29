@@ -50,7 +50,7 @@ jobs:
       run: terraform init
 
     - name: switch workspace
-      run: terraform workspace new ${{ github.event.inputs.workspace }}
+      run: terraform workspace new ${{ github.event.inputs.workspace }} -lock=false
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
