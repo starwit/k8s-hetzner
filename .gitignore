@@ -1,1 +1,2 @@
 kubernetes-hetzner/.terraform/**
+kubernetes-hetzner/.terraform.lock.hcl
