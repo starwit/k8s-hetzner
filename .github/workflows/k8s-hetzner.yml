@@ -34,9 +34,9 @@ jobs:
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v2
-      
-    - name: go to terraform directory
-      run: cd kubernetes-hetzner | ls
+      run: |
+        cd kubernetes-hetzner
+        ls
       
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
