@@ -38,9 +38,9 @@ jobs:
         with:
           repository: starwit/tfstate
           token: ${{ secrets.TFSTATE_PERSONAL_TOKEN }} # permission to access to external repositories
-          path: tfstate
+          path: kubernetes-hetzner/terraform.tfstate.d
       
-      - name: Set tfworkspace to default value if emptyy
+      - name: Set tfworkspace to default value if empty
         id: checktfworkspace
         run: |
           if [ "${{ github.event.inputs.tfworkspace }}" == "" ]
