@@ -16,9 +16,6 @@ on:
         required: true
         default: "dev"
 
-env:
-  tfworkspace: ${{ github.event.inputs.tfworkspace }}
-
 jobs:
   terraform:
     name: 'Terraform'
@@ -35,10 +32,10 @@ jobs:
       - name: Check environment variables
         id: checktf
         run: |
-          if [ -z "$env.tfworkspace" ]; then
+          if [ -z "${{ github.event.inputs.tfworkspace }}" ]; then
             echo '::set-output name=tfworkspace::dev'
           else
-            echo '::set-output name=tfworkspace::${{ env.tfworkspace }}'
+            echo '::set-output name=tfworkspace::${{ github.event.inputs.tfworkspace }}'
           fi
 
       # Checkout the repository to the GitHub Actions runner
