@@ -11,13 +11,13 @@ on:
     branches: [ main ]
   workflow_dispatch:
     inputs:
-      tf-workspace:
-        description: 'terraform environment and workspace: *dev*, *int* or *prod*'     
+      tfworkspace:
+        description: "terraform environment and workspace: *dev*, *int* or *prod*"
         required: true
         default: "dev"
 
 env:
-  tf-workspace: if [ ${{ github.event.inputs.tf-workspace }} == "" ]; then "dev" else ${{ github.event.inputs.tf-workspace }} if
+  tfworkspace: ${{ github.event.inputs.tfworkspace }}
 
 jobs:
   terraform:
@@ -32,6 +32,16 @@ jobs:
         working-directory: ./kubernetes-hetzner
 
     steps:
+      - name: Check environment variables
+        id: checktfworkspacename
+        shell: bash
+        run: |
+          if [ "${{ env.tfworkspace }}" == "" ]; then
+            echo ::set-output name=tfworkspace::dev
+          else
+            echo ::set-output name=tfworkspace::${{ env.tf-workspace }}
+          fi
+
     # Checkout the repository to the GitHub Actions runner
     - name: Checkout
       uses: actions/checkout@v2
@@ -50,7 +60,7 @@ jobs:
       run: terraform init
 
     - name: switch workspace
-      run: terraform workspace new ${{ env.tf-workspace }}
+      run: terraform workspace new ${{ steps.checktfworkspacename.tfworkspace }}
 
     # Checks that all Terraform configuration files adhere to a canonical format
     - name: Terraform Format
