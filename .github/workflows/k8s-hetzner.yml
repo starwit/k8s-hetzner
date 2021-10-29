@@ -36,7 +36,7 @@ jobs:
       uses: actions/checkout@v2
       
     - name: go to terraform directory
-      run: cd k8s-hetzner
+      run: pwd | cd k8s-hetzner
       
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     - name: Setup Terraform
