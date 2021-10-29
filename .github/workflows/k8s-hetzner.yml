@@ -81,12 +81,13 @@ jobs:
       - name: commit terraform state
         run: |
           cd terraform.tfstate.d
-          git config --global user.name 'automatic push'
-          git config --global user.email 'witchpou@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:${{ secrets.TFSTATE_PERSONAL_TOKEN }}@github.com/statwit/tfstate
-          git add .
-          git commit -am "automated report"
-          git push
+          ls
+#          git config --global user.name 'automatic push'
+#          git config --global user.email 'witchpou@users.noreply.github.com'
+#          git remote set-url origin https://x-access-token:${{ secrets.TFSTATE_PERSONAL_TOKEN }}@github.com/statwit/tfstate
+#          git add .
+#          git commit -am "automated report"
+#          git push
       
       - name: Push changes
         uses: ad-m/github-push-action@master
