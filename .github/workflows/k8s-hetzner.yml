@@ -36,9 +36,9 @@ jobs:
         id: checktf
         run: |
           if [ "${{ env.tfworkspace }}" == "" ]; then
-            echo ::set-output name=tfworkspace::dev
+            echo '::set-output name=tfworkspace::"dev"'
           else
-            echo ::set-output name=tfworkspace::${{ env.tf-workspace }}
+            echo '::set-output name=tfworkspace::${{ env.tfworkspace }}'
           fi
 
       # Checkout the repository to the GitHub Actions runner
@@ -59,7 +59,7 @@ jobs:
         run: terraform init
 
       - name: switch workspace
-        run: terraform workspace new ${{ steps.checktf.tfworkspace }}
+        run: terraform workspace new ${{ steps.checktf.outputs.tfworkspace }}
 
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
