@@ -33,6 +33,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       
+      - name: Checkout external repo 🛎️
+        uses: actions/checkout@v2
+        with:
+          repository: starwit/tfstate
+          token: ${{ secrets.TFSTATE_PERSONAL_TOKEN }} # permission to access to external repositories
+          path: tfstate
+      
       - name: Set tfworkspace to default value if emptyy
         id: checktfworkspace
         run: |
