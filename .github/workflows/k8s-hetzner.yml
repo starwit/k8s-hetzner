@@ -74,25 +74,18 @@ jobs:
 
         # On push to main, build or change infrastructure according to Terraform configuration files
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
-      #- name: Terraform Apply
-      #  if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-      #  run: terraform apply -auto-approve
+      - name: Terraform Apply
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform apply -auto-approve
 
       - name: commit terraform state
         run: |
           cd terraform.tfstate.d
           ls
-#          git config --global user.name 'automatic push'
-#          git config --global user.email 'witchpou@users.noreply.github.com'
-#          git remote set-url origin https://x-access-token:${{ secrets.TFSTATE_PERSONAL_TOKEN }}@github.com/statwit/tfstate
-#          git add .
-#          git commit -am "automated report"
-#          git push
-      
-      - name: Push changes
-        uses: ad-m/github-push-action@master
-        with:
-          repository: starwit/tfstate
-          github_token: ${{ secrets.TFSTATE_PERSONAL_TOKEN }}
-          branch: main
+          git config --global user.name 'automatic push'
+          git config --global user.email 'witchpou@users.noreply.github.com'
+          git remote set-url origin https://x-access-token:${{ secrets.TFSTATE_PERSONAL_TOKEN }}@github.com/statwit/tfstate
+          git add .
+          git commit -am "automated report"
+          git push
 
