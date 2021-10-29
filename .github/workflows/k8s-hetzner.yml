@@ -80,10 +80,12 @@ jobs:
 
       - name: commit terraform state
         run: |
-          git config --global user.name 'automatic checkin'
+          cd kubernetes-hetzner/terraform.tfstate.d
+          git config --global user.name 'automatic push'
           git config --global user.email 'witchpou@users.noreply.github.com'
           git remote set-url origin https://x-access-token:${{ secrets.TFSTATE_PERSONAL_TOKEN }}@github.com/statwit/tfstate
-          git commit -am "Automated report"
+          git add .
+          git commit -am "automated report"
           git push
       
       - name: Push changes
