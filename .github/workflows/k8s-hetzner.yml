@@ -36,7 +36,7 @@ jobs:
       - name: Set tfworkspace to default value if emptyy
         id: checktfworkspace
         run: |
-          if [ ${{ github.event.inputs.tfworkspace }} == "" ]
+          if [ "${{ github.event.inputs.tfworkspace }}" == "" ]
           then
             echo ::set-output name=tfworkspace::dev
           else
