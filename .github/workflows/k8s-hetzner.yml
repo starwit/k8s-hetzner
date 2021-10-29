@@ -17,7 +17,7 @@ on:
         default: "dev"
 
 env:
-  tf-workspace: ${{ github.event.inputs.tf-workspace }}
+  tf-workspace: if [ ${{ github.event.inputs.tf-workspace }} == "" ]; then "dev" else ${{ github.event.inputs.tf-workspace }} if
 
 jobs:
   terraform:
