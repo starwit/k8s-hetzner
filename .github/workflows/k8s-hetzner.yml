@@ -52,6 +52,9 @@ jobs:
       # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         run: terraform fmt -check
+        env: 
+          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
+
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
