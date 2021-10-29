@@ -1,4 +1,4 @@
-variable "hcloud_token" {}
+variable "HCLOUD_TOKEN" {}
 variable "node_image" {
   default = "ubuntu-18.04"
 }
