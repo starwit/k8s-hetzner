@@ -64,8 +64,11 @@ jobs:
         run: terraform init
 
       - name: switch workspace
-        if: ! -d terraform.tfstate.d/${{ steps.checktfworkspace.outputs.tfworkspace }}
-        run: terraform workspace new ${{ steps.checktfworkspace.outputs.tfworkspace }}
+        run: |
+          if [ ! -d terraform.tfstate.d/${{ steps.checktfworkspace.outputs.tfworkspace }} ]
+          then
+            terraform workspace new ${{ steps.checktfworkspace.outputs.tfworkspace }}
+          fi
 
       - name: switch workspace
         run: terraform workspace select ${{ steps.checktfworkspace.outputs.tfworkspace }}
