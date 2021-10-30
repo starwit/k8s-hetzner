@@ -78,7 +78,13 @@ jobs:
         #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
         run: terraform apply -auto-approve
         env: 
-          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}        
+          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}   
+      
+      - name: Terraform Destroy
+        #if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        run: terraform destroy -auto-approve
+        env: 
+          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}    
 
       - name: commit terraform state
         run: |
@@ -86,8 +92,7 @@ jobs:
           ls
           git config --global user.name 'automatic push'
           git config --global user.email 'witchpou@users.noreply.github.com'
-          git remote set-url origin https://x-access-token:${{ secrets.TFSTATE_PERSONAL_TOKEN }}@github.com/statwit/tfstate
+          git remote set-url origin https://${{ secrets.TFSTATE_PERSONAL_TOKEN }}:x-oauth-basic@github.com/statwit/tfstate.git
           git add .
           git commit -am "automated report"
           git push
-
