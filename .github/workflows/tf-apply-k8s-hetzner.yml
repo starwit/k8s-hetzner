@@ -2,7 +2,9 @@ name: 'apply k8s hetzner'
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
+  pull_request:
   workflow_dispatch:
     inputs:
       tfworkspace:
@@ -53,7 +55,7 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: switch workspace
+      - name: create workspace
         run: |
           if [ ! -d terraform.tfstate.d/${{ steps.checktfworkspace.outputs.tfworkspace }} ]
           then
@@ -72,7 +74,7 @@ jobs:
       # Generates an execution plan for Terraform
       - name: Terraform Plan
         id: plan
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
         run: terraform plan -no-color
         continue-on-error: true
         env: 
@@ -108,12 +110,13 @@ jobs:
         # On push to main, build or change infrastructure according to Terraform configuration files
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: terraform apply -auto-approve
         env: 
           TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}   
 
       - name: commit terraform state
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
           cd terraform.tfstate.d
           ls
