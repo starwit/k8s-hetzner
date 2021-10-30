@@ -2,7 +2,9 @@ name: 'apply k8s hetzner'
 
 on:
   push:
-    branches: [ main ]
+    branches: 
+      - main
+  pull_request:
   workflow_dispatch:
     inputs:
       tfworkspace:
@@ -53,7 +55,7 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: switch workspace
+      - name: create workspace
         run: |
           if [ ! -d terraform.tfstate.d/${{ steps.checktfworkspace.outputs.tfworkspace }} ]
           then
