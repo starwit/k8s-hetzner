@@ -1,0 +1,87 @@
+name: 'destroy k8s hetzner'
+
+on:
+  workflow_dispatch:
+    inputs:
+      tfworkspace:
+        description: "terraform environment and workspace: *dev*, *int* or *prod*"
+        required: true
+        default: "dev"
+
+jobs:
+  terraform:
+    name: 'Terraform'
+    runs-on: ubuntu-latest
+
+    # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
+    defaults:
+      run:
+        shell: bash
+        working-directory: ./kubernetes-hetzner
+
+    steps:
+      # Checkout the repository to the GitHub Actions runner
+      - name: Checkout
+        uses: actions/checkout@v2
+      
+      - name: Checkout external repo 🛎️
+        uses: actions/checkout@v2
+        with:
+          repository: starwit/tfstate
+          token: ${{ secrets.TFSTATE_PERSONAL_TOKEN }} # permission to access to external repositories
+          path: kubernetes-hetzner/terraform.tfstate.d
+      
+      - name: Set tfworkspace to default value if empty
+        id: checktfworkspace
+        run: |
+          if [ "${{ github.event.inputs.tfworkspace }}" == "" ]
+          then
+            echo ::set-output name=tfworkspace::dev
+          else
+            echo ::set-output name=tfworkspace::${{ github.event.inputs.tfworkspace }}
+          fi
+
+      # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          cli_config_credentials_token: ${{ secrets.TF_VAR_hcloud_token }}
+
+      # Initialize a new or existing Terraform working directory by creating initial files, loading any remote state, downloading modules, etc.
+      - name: Terraform Init
+        run: terraform init
+
+      - name: switch workspace
+        if: ! -d terraform.tfstate.d/${{ steps.checktfworkspace.outputs.tfworkspace }}
+        run: terraform workspace new ${{ steps.checktfworkspace.outputs.tfworkspace }}
+
+      - name: switch workspace
+        run: terraform workspace select ${{ steps.checktfworkspace.outputs.tfworkspace }}
+
+      - name: Terraform Validate
+        id: validate
+        run: terraform validate -no-color
+        env:
+          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
+
+      # Generates an execution plan for Terraform
+      - name: Terraform Plan
+        id: plan
+        run: terraform plan
+        env: 
+          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
+  
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
+        env: 
+          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}    
+
+      - name: commit terraform state
+        run: |
+          cd terraform.tfstate.d
+          ls
+          git config --global user.name 'automatic push'
+          git config --global user.email 'witchpou@users.noreply.github.com'
+          git add .
+          git commit -m "automated tfstate"
+          git push
