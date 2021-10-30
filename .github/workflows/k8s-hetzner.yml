@@ -64,7 +64,7 @@ jobs:
         run: terraform init
 
       - name: switch workspace
-        run: terraform workspace new ${{ steps.checktfworkspace.outputs.tfworkspace }}
+        run: terraform workspace select ${{ steps.checktfworkspace.outputs.tfworkspace }}
 
       # Generates an execution plan for Terraform
       - name: Terraform Plan
