@@ -116,6 +116,7 @@ jobs:
           TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}   
 
       - name: commit terraform state
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
           cd terraform.tfstate.d
           ls
