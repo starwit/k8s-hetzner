@@ -17,8 +17,12 @@ systemctl restart kubelet
 
 apt-get install -qq -y kubectl
 
+echo "setting cgroup"
+CG=$(sudo docker info 2>/dev/null | sed -n 's/Cgroup Driver: \(.*\)/\1/p')
+sed -i "s/cgroup-driver=systemd/cgroup-driver=$CG/g" /etc/systemd/system/kubelet.service.d/10-kubeadm.conf
+
 echo "Initialize the master"
-kubeadm init --config /root/kubeconf.yaml
+kubeadm init --ignore-preflight-errors=all --config /root/kubeconf.yaml
 systemctl enable docker kubelet
 
 # Store join command in temporary file
