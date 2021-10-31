@@ -47,6 +47,14 @@ function install-docker {
     stable"
   # apt-cache madison docker-ce
   apt-get install -y docker-ce
+
+  sudo mkdir /etc/docker
+  cp daemon.json /etc/docker/daemon.json
+
+  sudo systemctl enable docker
+  sudo systemctl daemon-reload
+  sudo systemctl restart docker
+
 }
 
 function install-kubernetes {

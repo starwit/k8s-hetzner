@@ -15,6 +15,11 @@ resource "hcloud_server" "master" {
     destination = "/root/bootstrap.sh"
   }
 
+  provisioner "file" {
+    source      = "${path.module}/scripts/daemon.json"
+    destination = "/root/daemon.json"
+  }
+
   provisioner "remote-exec" {
     inline = ["/bin/bash /root/bootstrap.sh"]
   }

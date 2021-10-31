@@ -17,6 +17,11 @@ resource "hcloud_server" "node" {
     destination = "/root/bootstrap.sh"
   }
 
+  provisioner "file" {
+    source      = "${path.module}/scripts/daemon.json"
+    destination = "/root/daemon.json"
+  }
+
   provisioner "remote-exec" {
     inline = ["/bin/bash /root/bootstrap.sh"]
   }
@@ -48,7 +53,7 @@ resource "hcloud_server_network" "firewall-node" {
   connection {
     type="ssh"
     host = "${hcloud_server.master.ipv4_address}"
-    private_key = "${file(var.ssh_private_key)}"
+    private_key = "${var.ssh_private_key}"
   }  
 
   provisioner "remote-exec" {
@@ -66,7 +71,7 @@ resource "hcloud_server_network" "srvnetworknode1" {
   connection {
     type="ssh"
     host = "${element(hcloud_server.node.*.ipv4_address, count.index)}"
-    private_key = "${file(var.ssh_private_key)}"
+    private_key = "${var.ssh_private_key}"
   }  
 
   provisioner "remote-exec" {
