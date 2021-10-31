@@ -48,7 +48,7 @@ function install-docker {
   # apt-cache madison docker-ce
   apt-get install -y docker-ce
 
-  sudo mkdir /etc/docker
+  sudo mkdir -p /etc/docker
   cp daemon.json /etc/docker/daemon.json
 
   sudo systemctl enable docker
