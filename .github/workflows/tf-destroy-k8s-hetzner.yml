@@ -66,13 +66,6 @@ jobs:
         run: terraform validate -no-color
         env:
           TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
-
-      # Generates an execution plan for Terraform
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan
-        env: 
-          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
   
       - name: Terraform Destroy
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'      
@@ -80,7 +73,9 @@ jobs:
         run: terraform destroy -auto-approve
         continue-on-error: true
         env: 
-          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}    
+          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
+          TF_VAR_ssh_public_key: ${{ secrets.TF_PUBLIC_KEY }}
+          TF_VAR_ssh_private_key: ${{ secrets.TF_PRIVATE_KEY }} 
 
       - name: commit terraform state
         if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
