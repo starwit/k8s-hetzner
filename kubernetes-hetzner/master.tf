@@ -56,7 +56,7 @@ resource "hcloud_server_network" "srvnetworkmaster" {
   connection {
     type="ssh"
     host = "${hcloud_server.master.ipv4_address}"
-    private_key = "${file(var.ssh_private_key)}"
+    private_key = "${var.ssh_private_key}"
   }
 
   provisioner "remote-exec" {
