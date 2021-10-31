@@ -47,16 +47,6 @@ resource "hcloud_server" "master" {
     source      = "${path.module}/scripts/bash-config.sh"
     destination = "/root/bash-config.sh"
   }
-
-  provisioner "file" {
-    source      = "${path.module}/kubernetes-post-install-config"
-    destination = "/root/"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/app-deployment"
-    destination = "/root/"
-  }
 }
 
 resource "hcloud_server_network" "srvnetworkmaster" {

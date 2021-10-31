@@ -120,7 +120,7 @@ jobs:
           TF_VAR_ssh_private_key: ${{ secrets.TF_PRIVATE_KEY }}             
 
       - name: commit terraform state
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: |
           cd terraform.tfstate.d
           ls
