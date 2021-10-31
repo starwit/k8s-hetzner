@@ -79,6 +79,8 @@ jobs:
         continue-on-error: true
         env: 
           TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
+          TF_VAR_ssh_public_key: ${{ secrets.TF_PUBLIC_KEY }}
+          TF_VAR_ssh_private_key: ${{ secrets.TF_PRIVATE_KEY }}
 
       - uses: actions/github-script@0.9.0
         if: github.event_name == 'pull_request'
@@ -113,7 +115,9 @@ jobs:
         if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
         run: terraform apply -auto-approve
         env: 
-          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}   
+          TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
+          TF_VAR_ssh_public_key: ${{ secrets.TF_PUBLIC_KEY }}
+          TF_VAR_ssh_private_key: ${{ secrets.TF_PRIVATE_KEY }}             
 
       - name: commit terraform state
         if: github.ref == 'refs/heads/main' && github.event_name == 'push' || github.event_name == 'workflow_dispatch'
