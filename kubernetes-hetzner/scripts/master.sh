@@ -44,19 +44,11 @@ kubectl taint nodes --all node-role.kubernetes.io/master-
 echo "********************* add floating ip $3"
 ip addr add $3 dev eth0
 
-echo "********************* downloading and configuring latest helm binary"
-mkdir ~/bin
-wget https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz
-tar -xvf helm-v3.0.2-linux-amd64.tar.gz
-mv ~/linux-amd64/helm ~/bin
-rm helm-v3.0.2-linux-amd64.tar.gz
-rm -r ~/linux-amd64
+curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+sudo apt-get install apt-transport-https --yes
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
 
 source ~/bash-config.sh
-
-helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-
-
-# install ingress controller 
-helm install my-nginx stable/nginx-ingress --set controller.service.externalIPs[0]=$3
 
