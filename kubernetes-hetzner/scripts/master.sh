@@ -17,7 +17,7 @@ systemctl restart kubelet
 
 apt-get install -qq -y kubectl
 
-# Initialize the master
+echo "Initialize the master"
 kubeadm init --config /root/kubeconf.yaml
 systemctl enable docker kubelet
 

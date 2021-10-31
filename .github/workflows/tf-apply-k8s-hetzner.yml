@@ -132,6 +132,6 @@ jobs:
           git commit -m "automated tfstate"
           git push
 
-      - name: Terraform Plan Status
+      - name: Terraform apply Status
         if: steps.apply.outcome == 'failure'
         run: exit 1
