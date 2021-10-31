@@ -34,7 +34,7 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Install weave as cni addon
 sysctl net.bridge.bridge-nf-call-iptables=1
-kubectl apply -f kube-flannel.yml
+kubectl apply -f kube-flannel.yaml
 #kubectl apply -f /root/kube-flannel.yaml
 
 # remove when creating a real cluster
