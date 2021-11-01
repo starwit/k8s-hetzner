@@ -66,7 +66,7 @@ jobs:
 
       - name: Terraform Validate
         id: validate
-        run: terraform validate -no-color
+        run: terraform validate -no-color -var-file=env/${{ steps.checktfworkspace.outputs.tfworkspace }}.tfvars
         env:
           TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
   
@@ -74,7 +74,7 @@ jobs:
       - name: Terraform Destroy
         if: github.event_name == 'workflow_dispatch'      
         id: destroy
-        run: terraform destroy -auto-approve
+        run: terraform destroy -auto-approve -var-file=env/${{ steps.checktfworkspace.outputs.tfworkspace }}.tfvars
         continue-on-error: true
         env: 
           TF_VAR_HCLOUD_TOKEN: ${{ secrets.TF_VAR_HCLOUD_TOKEN }}
