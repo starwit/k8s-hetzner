@@ -1,4 +1,4 @@
-# Install Kubernetes Cluster on Hetzner
+# Install Kubernetes Cluster on Hetzner with Terraform and GitHubActions
 
 ## Installation Hints
 
