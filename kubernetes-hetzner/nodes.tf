@@ -1,6 +1,6 @@
 resource "hcloud_server" "node" {
   count       = "${var.workers}"
-  name        = "node-${count.index}"
+  name        = "${terraform.workspace}-node-${count.index}"
   server_type = "${var.worker_type}"
   image       = "${var.node_image}"
   depends_on  = [hcloud_server.master, hcloud_server_network.srvnetworkmaster]
