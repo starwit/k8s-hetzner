@@ -68,7 +68,8 @@ function install-kubernetes {
   deb http://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 
-  apt-get -qq update && apt-get -qq install -y kubelet kubeadm
+  apt-get -qq update && apt-get -qq install -y kubelet kubeadm kubectl
+  sudo apt-mark hold kubelet kubeadm kubectl
 }
 
 main

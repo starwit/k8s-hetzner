@@ -1,3 +1,4 @@
+# Creates a cluster on a private network on hetzner
 name: 'apply k8s hetzner'
 
 on:
@@ -14,7 +15,7 @@ on:
 
 jobs:
   terraform:
-    name: 'Terraform'
+    name: 'Create Kubernetes Cluster on Hetzner'
     runs-on: ubuntu-latest
 
     # Use the Bash shell regardless whether the GitHub Actions runner is ubuntu-latest, macos-latest, or windows-latest
@@ -28,13 +29,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
       
-      - name: Checkout external repo 🛎️
+      - name: Checkout Terraform State from Repository
         uses: actions/checkout@v2
         with:
           repository: starwit/tfstate
           token: ${{ secrets.TFSTATE_PERSONAL_TOKEN }} # permission to access to external repositories
           path: kubernetes-hetzner/terraform.tfstate.d
       
+      # Set dev as default workspace
       - name: Set tfworkspace to default value if empty
         id: checktfworkspace
         run: |
@@ -46,6 +48,7 @@ jobs:
           fi
 
       # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
+      # Install Hetzner provider
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
         with:
@@ -55,14 +58,15 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: create workspace
+      # Creates terraform workspace if not exists
+      - name: Create Workspace
         run: |
           if [ ! -d terraform.tfstate.d/${{ steps.checktfworkspace.outputs.tfworkspace }} ]
           then
             terraform workspace new ${{ steps.checktfworkspace.outputs.tfworkspace }}
           fi
 
-      - name: switch workspace
+      - name: Switch Workspace
         run: terraform workspace select ${{ steps.checktfworkspace.outputs.tfworkspace }}
 
       - name: Terraform Validate
@@ -82,6 +86,7 @@ jobs:
           TF_VAR_ssh_public_key: ${{ secrets.TF_PUBLIC_KEY }}
           TF_VAR_ssh_private_key: ${{ secrets.TF_PRIVATE_KEY }}
 
+      # Adds the output of terraform plan as check for pull requests
       - uses: actions/github-script@0.9.0
         if: github.event_name == 'pull_request'
         env:
@@ -105,6 +110,7 @@ jobs:
               repo: context.repo.repo,
               body: output
             })
+      
       - name: Terraform Plan Status
         if: steps.plan.outcome == 'failure'
         run: exit 1
@@ -113,7 +119,7 @@ jobs:
         # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
       - name: Terraform Apply
         id: apply
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+        if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
         run: terraform apply -auto-approve
         continue-on-error: true
         env: 
@@ -121,8 +127,8 @@ jobs:
           TF_VAR_ssh_public_key: ${{ secrets.TF_PUBLIC_KEY }}
           TF_VAR_ssh_private_key: ${{ secrets.TF_PRIVATE_KEY }}             
 
-      - name: commit terraform state
-        if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+      - name: Commit Terraform State
+        if: (github.ref == 'refs/heads/main' && github.event_name == 'push') || github.event_name == 'workflow_dispatch'
         run: |
           cd terraform.tfstate.d
           ls
@@ -132,6 +138,6 @@ jobs:
           git commit -m "automated tfstate"
           git push
 
-      - name: Terraform apply Status
+      - name: Terraform Apply Status
         if: steps.apply.outcome == 'failure'
         run: exit 1

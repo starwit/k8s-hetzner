@@ -41,9 +41,10 @@ kubectl apply -f kube-flannel.yaml
 kubectl taint nodes --all node-role.kubernetes.io/master-
 
 
-echo "********************* add floating ip $3"
+echo "********************* add floating ip $3 *****************"
 ip addr add $3 dev eth0
 
+echo "******************** install helm ****************************"
 curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
 sudo apt-get install apt-transport-https --yes
 echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
