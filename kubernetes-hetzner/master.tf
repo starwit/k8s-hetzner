@@ -68,25 +68,6 @@ resource "hcloud_server_network" "srvnetworkmaster" {
     inline = ["/bin/bash /root/master.sh 192.168.2.2 ${hcloud_server.master.ipv4_address} ${hcloud_floating_ip.public_ip.ip_address}"]
   }
 
-  provisioner "local-exec" {
-    command = "bash ${path.module}/scripts/copy_local.sh"
-
-    environment = {
-      SSH_PRIVATE_KEY 	= "${var.ssh_private_key}"
-      SSH_CONN   				= "root@${hcloud_server.master.ipv4_address}"
-      COPY_TO_LOCAL    	= "creds/"
-    }
-  }
-}
-
-#resource "hcloud_volume" "k8storage" {
-#  name = "nodevolume"
-#  size = 10
-#  server_id = "${hcloud_server.master.id}"
-#  automount = "true"
-#  format = "ext4"
-#}
-
 resource "hcloud_floating_ip" "public_ip" {
   name = "${terraform.workspace}-k8s-floating-ip"
   server_id = "${hcloud_server.master.id}"
