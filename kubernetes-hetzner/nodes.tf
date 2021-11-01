@@ -8,7 +8,7 @@ resource "hcloud_server" "node" {
 
   connection {
     type = "ssh"
-    host = "${element(hcloud_server.node.*.ipv4_address, count.index)}"
+    host = "(self.private_ip)"
     private_key = "${var.ssh_private_key}"
   }
 
