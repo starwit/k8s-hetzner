@@ -67,6 +67,7 @@ resource "hcloud_server_network" "srvnetworkmaster" {
   provisioner "remote-exec" {
     inline = ["/bin/bash /root/master.sh 192.168.2.2 ${hcloud_server.master.ipv4_address} ${hcloud_floating_ip.public_ip.ip_address}"]
   }
+}
 
 resource "hcloud_floating_ip" "public_ip" {
   name = "${terraform.workspace}-k8s-floating-ip"
