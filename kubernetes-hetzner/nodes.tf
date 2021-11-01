@@ -5,42 +5,6 @@ resource "hcloud_server" "node" {
   image       = "${var.node_image}"
   depends_on  = [hcloud_server.master, hcloud_server_network.srvnetworkmaster]
   ssh_keys = [ "${hcloud_ssh_key.terraformremotekey.id}"]
-
-  connection {
-    type = "ssh"
-    host = "(self.private_ip)"
-    private_key = "${var.ssh_private_key}"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/scripts/bootstrap.sh"
-    destination = "/root/bootstrap.sh"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/scripts/daemon.json"
-    destination = "/root/daemon.json"
-  }
-
-  provisioner "remote-exec" {
-    inline = ["/bin/bash /root/bootstrap.sh"]
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/creds/cluster_join"
-    destination = "/tmp/cluster_join"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/scripts/node.sh"
-    destination = "/root/node.sh"
-  }
-
-  # bash stuff
-  provisioner "file" {
-    source      = "${path.module}/scripts/bash-config.sh"
-    destination = "/root/bash-config.sh"
-  }
 }
 
 resource "hcloud_server_network" "firewall-node" {
@@ -72,6 +36,36 @@ resource "hcloud_server_network" "srvnetworknode1" {
     type="ssh"
     host = "${element(hcloud_server.node.*.ipv4_address, count.index)}"
     private_key = "${var.ssh_private_key}"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/scripts/bootstrap.sh"
+    destination = "/root/bootstrap.sh"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/scripts/daemon.json"
+    destination = "/root/daemon.json"
+  }
+
+  provisioner "remote-exec" {
+    inline = ["/bin/bash /root/bootstrap.sh"]
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/creds/cluster_join"
+    destination = "/tmp/cluster_join"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/scripts/node.sh"
+    destination = "/root/node.sh"
+  }
+
+  # bash stuff
+  provisioner "file" {
+    source      = "${path.module}/scripts/bash-config.sh"
+    destination = "/root/bash-config.sh"
   }  
 
   provisioner "remote-exec" {

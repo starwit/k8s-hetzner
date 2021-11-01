@@ -1,2 +1,3 @@
 kubernetes-hetzner/.terraform/**
 kubernetes-hetzner/.terraform.lock.hcl
+kubernetes-hetzner/env/local.tfvars
