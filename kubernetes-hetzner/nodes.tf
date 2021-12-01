@@ -53,11 +53,6 @@ resource "hcloud_server_network" "srvnetworknode1" {
   }
 
   provisioner "file" {
-    source      = "${path.module}/creds/cluster_join"
-    destination = "/tmp/cluster_join"
-  }
-
-  provisioner "file" {
     source      = "${path.module}/scripts/node.sh"
     destination = "/root/node.sh"
   }
