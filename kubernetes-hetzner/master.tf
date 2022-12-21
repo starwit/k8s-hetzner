@@ -15,6 +15,11 @@ resource "hcloud_server" "master" {
     destination = "/root/bootstrap.sh"
   }
 
+  provisioner "file" {
+    source      = "${path.module}/scripts/daemon.json"
+    destination = "/root/daemon.json"
+  }
+
   provisioner "remote-exec" {
     inline = ["/bin/bash /root/bootstrap.sh"]
   }
@@ -73,14 +78,6 @@ resource "hcloud_server_network" "srvnetworkmaster" {
     }
   }
 }
-
-#resource "hcloud_volume" "k8storage" {
-#  name = "nodevolume"
-#  size = 10
-#  server_id = "${hcloud_server.master.id}"
-#  automount = "true"
-#  format = "ext4"
-#}
 
 resource "hcloud_floating_ip" "public_ip" {
   name = "${terraform.workspace}-k8s-floating-ip"

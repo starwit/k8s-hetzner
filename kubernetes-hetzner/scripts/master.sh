@@ -17,7 +17,7 @@ systemctl restart kubelet
 
 apt-get install -qq -y kubectl
 
-# Initialize the master
+echo "Initialize the master"
 kubeadm init --config /root/kubeconf.yaml
 systemctl enable docker kubelet
 
@@ -34,29 +34,22 @@ sudo chown $(id -u):$(id -g) $HOME/.kube/config
 
 # Install weave as cni addon
 sysctl net.bridge.bridge-nf-call-iptables=1
-kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/2140ac876ef134e0ed5af15c65e414cf26827915/Documentation/kube-flannel.yml
+kubectl apply -f kube-flannel.yaml
 #kubectl apply -f /root/kube-flannel.yaml
 
 # remove when creating a real cluster
 kubectl taint nodes --all node-role.kubernetes.io/master-
 
 
-echo "********************* add floating ip $3"
+echo "********************* add floating ip $3 *****************"
 ip addr add $3 dev eth0
 
-echo "********************* downloading and configuring latest helm binary"
-mkdir ~/bin
-wget https://get.helm.sh/helm-v3.0.2-linux-amd64.tar.gz
-tar -xvf helm-v3.0.2-linux-amd64.tar.gz
-mv ~/linux-amd64/helm ~/bin
-rm helm-v3.0.2-linux-amd64.tar.gz
-rm -r ~/linux-amd64
+echo "******************** install helm ****************************"
+curl https://baltocdn.com/helm/signing.asc | sudo apt-key add -
+sudo apt-get install apt-transport-https --yes
+echo "deb https://baltocdn.com/helm/stable/debian/ all main" | sudo tee /etc/apt/sources.list.d/helm-stable-debian.list
+sudo apt-get update
+sudo apt-get install helm
 
 source ~/bash-config.sh
-
-helm repo add stable https://kubernetes-charts.storage.googleapis.com/
-
-
-# install ingress controller 
-helm install my-nginx stable/nginx-ingress --set controller.service.externalIPs[0]=$3
 

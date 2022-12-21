@@ -1,41 +1,10 @@
 resource "hcloud_server" "node" {
   count       = "${var.workers}"
-  name        = "node-${count.index}"
+  name        = "${terraform.workspace}-node-${count.index}"
   server_type = "${var.worker_type}"
   image       = "${var.node_image}"
   depends_on  = [hcloud_server.master, hcloud_server_network.srvnetworkmaster]
   ssh_keys = [ "${hcloud_ssh_key.terraformremotekey.id}"]
-
-  connection {
-    type = "ssh"
-    host = "${element(hcloud_server.node.*.ipv4_address, count.index)}"
-    private_key = "${var.ssh_private_key}"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/scripts/bootstrap.sh"
-    destination = "/root/bootstrap.sh"
-  }
-
-  provisioner "remote-exec" {
-    inline = ["/bin/bash /root/bootstrap.sh"]
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/creds/cluster_join"
-    destination = "/tmp/cluster_join"
-  }
-
-  provisioner "file" {
-    source      = "${path.module}/scripts/node.sh"
-    destination = "/root/node.sh"
-  }
-
-  # bash stuff
-  provisioner "file" {
-    source      = "${path.module}/scripts/bash-config.sh"
-    destination = "/root/bash-config.sh"
-  }
 }
 
 resource "hcloud_server_network" "firewall-node" {
@@ -48,7 +17,7 @@ resource "hcloud_server_network" "firewall-node" {
   connection {
     type="ssh"
     host = "${hcloud_server.master.ipv4_address}"
-    private_key = "${file(var.ssh_private_key)}"
+    private_key = "${var.ssh_private_key}"
   }  
 
   provisioner "remote-exec" {
@@ -66,7 +35,32 @@ resource "hcloud_server_network" "srvnetworknode1" {
   connection {
     type="ssh"
     host = "${element(hcloud_server.node.*.ipv4_address, count.index)}"
-    private_key = "${file(var.ssh_private_key)}"
+    private_key = "${var.ssh_private_key}"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/scripts/bootstrap.sh"
+    destination = "/root/bootstrap.sh"
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/scripts/daemon.json"
+    destination = "/root/daemon.json"
+  }
+
+  provisioner "remote-exec" {
+    inline = ["/bin/bash /root/bootstrap.sh"]
+  }
+
+  provisioner "file" {
+    source      = "${path.module}/scripts/node.sh"
+    destination = "/root/node.sh"
+  }
+
+  # bash stuff
+  provisioner "file" {
+    source      = "${path.module}/scripts/bash-config.sh"
+    destination = "/root/bash-config.sh"
   }  
 
   provisioner "remote-exec" {

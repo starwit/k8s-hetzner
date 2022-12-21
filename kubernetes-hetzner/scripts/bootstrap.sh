@@ -47,6 +47,14 @@ function install-docker {
     stable"
   # apt-cache madison docker-ce
   apt-get install -y docker-ce
+
+  sudo mkdir -p /etc/docker
+  cp daemon.json /etc/docker/daemon.json
+
+  sudo systemctl enable docker
+  sudo systemctl daemon-reload
+  sudo systemctl restart docker
+
 }
 
 function install-kubernetes {
@@ -60,7 +68,8 @@ function install-kubernetes {
   deb http://apt.kubernetes.io/ kubernetes-xenial main
 EOF
 
-  apt-get -qq update && apt-get -qq install -y kubelet kubeadm
+  apt-get -qq update && apt-get -qq install -y kubelet kubeadm kubectl
+  sudo apt-mark hold kubelet kubeadm kubectl
 }
 
 main
